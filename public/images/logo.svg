@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Ahmed Steels emblem without text">
+  <style>
+    .border { fill: none; stroke: #0B1F3C; stroke-width: 18; }
+    .arm-fill { fill: #F28C34; }
+    .arm-stroke { fill: none; stroke: #0B1F3C; stroke-width: 8; stroke-linecap: round; stroke-linejoin: round; }
+    .rebar-fill { fill: #7A7F85; }
+    .rebar-stroke { fill: none; stroke: #0B1F3C; stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+    .rib { fill: none; stroke: #0B1F3C; stroke-width: 3; opacity: 0.9; }
+  </style>
+
+  <circle class="border" cx="256" cy="256" r="220"/>
+
+  <g transform="translate(0, -10)">
+    <g>
+      <rect class="rebar-fill" x="110" y="210" width="320" height="28" rx="8"/>
+      <rect class="rebar-fill" x="110" y="250" width="320" height="28" rx="8"/>
+      <rect class="rebar-stroke" x="110" y="210" width="320" height="28" rx="8"/>
+      <rect class="rebar-stroke" x="110" y="250" width="320" height="28" rx="8"/>
+
+      <!-- Ribs on rebars -->
+      <g>
+        <!-- top rebar ribs -->
+        <path class="rib" d="M120 215 L140 238"/>
+        <path class="rib" d="M150 215 L170 238"/>
+        <path class="rib" d="M180 215 L200 238"/>
+        <path class="rib" d="M210 215 L230 238"/>
+        <path class="rib" d="M240 215 L260 238"/>
+        <path class="rib" d="M270 215 L290 238"/>
+        <path class="rib" d="M300 215 L320 238"/>
+        <path class="rib" d="M330 215 L350 238"/>
+        <path class="rib" d="M360 215 L380 238"/>
+        <path class="rib" d="M390 215 L410 238"/>
+
+        <!-- bottom rebar ribs -->
+        <path class="rib" d="M120 255 L140 278"/>
+        <path class="rib" d="M150 255 L170 278"/>
+        <path class="rib" d="M180 255 L200 278"/>
+        <path class="rib" d="M210 255 L230 278"/>
+        <path class="rib" d="M240 255 L260 278"/>
+        <path class="rib" d="M270 255 L290 278"/>
+        <path class="rib" d="M300 255 L320 278"/>
+        <path class="rib" d="M330 255 L350 278"/>
+        <path class="rib" d="M360 255 L380 278"/>
+        <path class="rib" d="M390 255 L410 278"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Flexing arm in front -->
+  <g transform="translate(0, 10)">
+    <!-- Arm fill shape -->
+    <path class="arm-fill" d="M320 330
+      c-20 8 -46 12 -72 10
+      c-24 -2 -46 -10 -64 -24
+      c-20 -16 -34 -36 -38 -59
+      c-3 -18 1 -36 11 -50
+      c10 -14 26 -25 44 -30
+      c10 -3 19 -8 25 -15
+      c10 -12 16 -27 18 -44
+      c1 -10 10 -18 20 -18
+      c12 0 24 7 33 18
+      c9 11 14 24 16 36
+      c2 10 9 18 18 22
+      c8 3 17 1 24 -5
+      c8 -6 18 -8 27 -6
+      c10 3 18 10 22 20
+      c4 10 3 21 -4 30
+      c-8 11 -22 18 -35 20
+      c-10 1 -19 6 -26 12
+      c-5 4 -9 9 -12 15
+      c-6 12 -10 25 -12 38
+      z"/>
+
+    <!-- Arm outline details -->
+    <path class="arm-stroke" d="M320 330
+      c-20 8 -46 12 -72 10
+      c-24 -2 -46 -10 -64 -24
+      c-20 -16 -34 -36 -38 -59
+      c-3 -18 1 -36 11 -50
+      c10 -14 26 -25 44 -30
+      c10 -3 19 -8 25 -15
+      c10 -12 16 -27 18 -44
+      c1 -10 10 -18 20 -18
+      c12 0 24 7 33 18
+      c9 11 14 24 16 36
+      c2 10 9 18 18 22
+      c8 3 17 1 24 -5
+      c8 -6 18 -8 27 -6
+      c10 3 18 10 22 20
+      c4 10 3 21 -4 30
+      c-8 11 -22 18 -35 20
+      c-10 1 -19 6 -26 12
+      c-5 4 -9 9 -12 15
+      c-6 12 -10 25 -12 38
+      z"/>
+
+    <path class="arm-stroke" d="M355 250
+      c10 -2 18 1 23 9
+      c6 9 6 21 -1 31
+      c-6 9 -17 15 -28 16"/>
+
+    <path class="arm-stroke" d="M255 305
+      c-8 6 -16 11 -24 14"/>
+  </g>
+</svg>
