@@ -6,7 +6,7 @@
   html {
     scroll-behavior: smooth;
   }
-  
+
   body {
     @apply bg-gray-50 text-gray-900;
   }
@@ -36,4 +36,33 @@
   .section-subtitle {
     @apply text-lg md:text-xl text-gray-600 mb-12;
   }
+}
+
+/* Swiper Gallery Styles */
+.gallery-swiper .swiper-pagination {
+  bottom: 0 !important;
+}
+
+.gallery-swiper .swiper-pagination-bullet {
+  width: 12px;
+  height: 12px;
+  background: #1e40af;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.gallery-swiper .swiper-pagination-bullet-active {
+  opacity: 1;
+  background: #1e40af;
+  transform: scale(1.2);
+}
+
+.gallery-swiper .swiper-slide {
+  height: auto;
+}
+
+.gallery-swiper .swiper-button-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  pointer-events: none;
 }

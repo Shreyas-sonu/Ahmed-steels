@@ -1,11 +1,4 @@
-import {
-  Facebook,
-  Instagram,
-  Mail,
-  MapPin,
-  Phone,
-  Twitter,
-} from "lucide-react";
+import { Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 import Image from "next/image";
 
 export default function Footer() {
@@ -95,62 +88,41 @@ export default function Footer() {
                 </a>
               </li>
               <li className="flex items-start space-x-3">
+                <MessageCircle className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                <a
+                  href="https://wa.me/919972394416"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-gray-400 hover:text-green-400 transition-colors"
+                >
+                  WhatsApp Us
+                </a>
+              </li>
+              <li className="flex items-start space-x-3">
                 <Mail className="w-5 h-5 text-primary-400 mt-0.5 flex-shrink-0" />
                 <a
                   href="mailto:mohammedtahirsteel@gmail.com"
-                  className="text-gray-400 hover:text-primary-400 transition-colors break-all"
+                  className="text-gray-400 hover:text-primary-400 transition-colors break-all text-sm"
                 >
                   mohammedtahirsteel@gmail.com
                 </a>
               </li>
               <li className="flex items-start space-x-3">
                 <MapPin className="w-5 h-5 text-primary-400 mt-0.5 flex-shrink-0" />
-                <span className="text-gray-400">
-                  Bangalore, Karnataka, India
-                </span>
+                <span className="text-gray-400">Mandya, Karnataka, India</span>
               </li>
             </ul>
           </div>
 
-          {/* Business Hours & Social */}
+          {/* Business Hours */}
           <div>
             <h4 className="text-lg font-semibold text-white mb-4">
               Business Hours
             </h4>
-            <div className="space-y-2 text-sm text-gray-400 mb-6">
+            <div className="space-y-2 text-sm text-gray-400">
               <p>Monday - Saturday</p>
-              <p className="font-semibold text-white">9:00 AM - 7:00 PM</p>
-              <p className="mt-2">Sunday: Closed</p>
-            </div>
-
-            {/* Social Media */}
-            <div>
-              <h4 className="text-lg font-semibold text-white mb-4">
-                Follow Us
-              </h4>
-              <div className="flex space-x-4">
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors"
-                  aria-label="Facebook"
-                >
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors"
-                  aria-label="Instagram"
-                >
-                  <Instagram className="w-5 h-5" />
-                </a>
-                <a
-                  href="#"
-                  className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-primary-600 transition-colors"
-                  aria-label="Twitter"
-                >
-                  <Twitter className="w-5 h-5" />
-                </a>
-              </div>
+              <p className="font-semibold text-white">8:00 AM - 7:00 PM</p>
+              <p className="mt-2">Sunday: 7:00 AM - 1:00 PM</p>
             </div>
           </div>
         </div>

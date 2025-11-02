@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, Menu, Phone, X } from "lucide-react";
+import { Mail, Menu, MessageCircle, Phone, X } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -80,6 +80,15 @@ export default function Header() {
               <span className="text-sm font-medium">+91 9972394416</span>
             </a>
             <a
+              href="https://wa.me/919972394416"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center space-x-2 text-gray-700 hover:text-green-600 transition-colors"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span className="text-sm font-medium">WhatsApp</span>
+            </a>
+            <a
               href="mailto:mohammedtahirsteel@gmail.com"
               className="flex items-center space-x-2 text-gray-700 hover:text-primary-600 transition-colors"
             >
@@ -123,6 +132,15 @@ export default function Header() {
                 >
                   <Phone className="w-4 h-4" />
                   <span className="text-sm">+91 9972394416</span>
+                </a>
+                <a
+                  href="https://wa.me/919972394416"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center space-x-2 text-gray-700 py-2 px-4 hover:text-green-600"
+                >
+                  <MessageCircle className="w-4 h-4" />
+                  <span className="text-sm">WhatsApp</span>
                 </a>
                 <a
                   href="mailto:mohammedtahirsteel@gmail.com"

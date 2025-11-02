@@ -1,0 +1,12 @@
+This is a placeholder image. Please replace with actual shop photos.
+
+To add real images:
+1. Visit: https://www.google.com/maps/place/Ahmed+Steels+%26+Cements/@12.5268784,76.9125889
+2. Download high-quality photos of the shop
+3. Replace this file with the actual image
+
+Recommended specs:
+- Format: JPG or PNG
+- Size: 1920x1080px (landscape)
+- Quality: High (80-100%)
+- File size: Under 1MB
