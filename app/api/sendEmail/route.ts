@@ -1,33 +1,26 @@
-import { NextRequest, NextResponse } from 'next/server'
-import nodemailer from 'nodemailer'
+import { NextRequest, NextResponse } from "next/server";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { name, phone, place, description } = body
+    const body = await request.json();
+    const { name, phone, place, description } = body;
 
     // Validate input
     if (!name || !phone || !place || !description) {
       return NextResponse.json(
-        { error: 'All fields are required' },
+        { error: "All fields are required" },
         { status: 400 }
-      )
+      );
     }
 
-    // Create transporter
-    // NOTE: You need to configure your email credentials in environment variables
-    const transporter = nodemailer.createTransport({
-      service: 'gmail', // or your email service
-      auth: {
-        user: process.env.EMAIL_USER || 'mohammedtahirsteel@gmail.com',
-        pass: process.env.EMAIL_PASS || '', // App password required for Gmail
-      },
-    })
-
-    // Email content
-    const mailOptions = {
-      from: process.env.EMAIL_USER || 'mohammedtahirsteel@gmail.com',
-      to: 'mohammedtahirsteel@gmail.com',
+    // Send email using Resend
+    const data = await resend.emails.send({
+      from: "Ahmed Steels <onboarding@resend.dev>", // Will use Resend's domain initially
+      to: "mohammedtahirsteel@gmail.com",
+      replyTo: "mohammedtahirsteel@gmail.com",
       subject: `New Enquiry from ${name} - Ahmed Steels & Cement`,
       html: `
         <!DOCTYPE html>
@@ -127,30 +120,20 @@ export async function POST(request: NextRequest) {
         </body>
         </html>
       `,
-      text: `
-New Enquiry - Ahmed Steels & Cement
-
-Customer Name: ${name}
-Phone Number: ${phone}
-Location: ${place}
-Requirements: ${description}
-
-Please respond to this enquiry as soon as possible.
-      `,
-    }
-
-    // Send email
-    await transporter.sendMail(mailOptions)
+    });
 
     return NextResponse.json(
-      { message: 'Email sent successfully' },
+      { message: "Email sent successfully" },
       { status: 200 }
-    )
+    );
   } catch (error) {
-    console.error('Error sending email:', error)
+    console.error("Error sending email:", error);
     return NextResponse.json(
-      { error: 'Failed to send email' },
+      {
+        error: "Failed to send email",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
       { status: 500 }
-    )
+    );
   }
 }
