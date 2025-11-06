@@ -202,12 +202,12 @@ export default function Hero() {
               )}
             </div>
 
-            {/* Mobile hint - show on smaller screens */}
+            {/* Mobile hint - show on smaller screens
             {!showButtons && (
               <div className="mt-2 text-xs text-primary-400/60 md:hidden animate-pulse">
                 Tap 3 times or drag to reveal →
               </div>
-            )}
+            )} */}
           </div>
 
           {/* Secret Buttons - Hidden until badge is dragged */}
