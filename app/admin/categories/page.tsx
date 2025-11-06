@@ -315,7 +315,10 @@ export default function CategoriesPage() {
             </div>
 
             {/* Scrollable Content */}
-            <form onSubmit={handleSubmit} className="flex flex-col flex-1 min-h-0">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col flex-1 min-h-0"
+            >
               <div className="overflow-y-auto flex-1 p-4 space-y-3">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">

@@ -388,9 +388,7 @@ export default function PendingSalesPage() {
             {/* Fixed Header */}
             <div className="p-4 border-b border-gray-200 flex-shrink-0">
               <div className="flex items-center justify-between mb-3">
-                <h2 className="text-xl font-bold text-gray-900">
-                  Add Payment
-                </h2>
+                <h2 className="text-xl font-bold text-gray-900">Add Payment</h2>
                 <button
                   onClick={() => setShowPaymentModal(false)}
                   className="text-gray-400 hover:text-gray-600"
@@ -398,7 +396,9 @@ export default function PendingSalesPage() {
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <p className="text-sm text-gray-600">{selectedSale.customer_name}</p>
+              <p className="text-sm text-gray-600">
+                {selectedSale.customer_name}
+              </p>
 
               {/* Sale Summary - Compact */}
               <div className="grid grid-cols-3 gap-3 mt-3 bg-gray-50 rounded-lg p-3">
@@ -457,7 +457,11 @@ export default function PendingSalesPage() {
               )}
 
               {/* Payment Form */}
-              <form id="paymentForm" onSubmit={handleSubmitPayment} className="space-y-3">
+              <form
+                id="paymentForm"
+                onSubmit={handleSubmitPayment}
+                className="space-y-3"
+              >
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -509,7 +513,10 @@ export default function PendingSalesPage() {
                   <textarea
                     value={paymentData.comments}
                     onChange={e =>
-                      setPaymentData({ ...paymentData, comments: e.target.value })
+                      setPaymentData({
+                        ...paymentData,
+                        comments: e.target.value,
+                      })
                     }
                     className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     rows={2}
