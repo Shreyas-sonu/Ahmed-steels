@@ -9,6 +9,7 @@ export default function Hero() {
   const [isDragging, setIsDragging] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
   const [clickSequence, setClickSequence] = useState<number[]>([]);
+  const [tapCount, setTapCount] = useState(0);
   const [randomNumbers] = useState([
     Math.floor(Math.random() * 900) + 100,
     Math.floor(Math.random() * 900) + 100,
@@ -18,6 +19,7 @@ export default function Hero() {
   const badgeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
+  const tapTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Drag threshold - how far to drag to reveal buttons (in pixels)
   const DRAG_THRESHOLD = 150;
@@ -26,6 +28,34 @@ export default function Hero() {
     setIsDragging(true);
     const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
     startXRef.current = clientX - dragPosition;
+  };
+
+  // Mobile-friendly tap handler - triple tap to reveal
+  const handleBadgeTap = () => {
+    if (window.innerWidth > 768) return; // Only for mobile
+    // Clear previous timeout
+    if (tapTimeoutRef.current) {
+      clearTimeout(tapTimeoutRef.current);
+    }
+
+    const newTapCount = tapCount + 1;
+    setTapCount(newTapCount);
+
+    // Triple tap reveals buttons (mobile alternative)
+    if (newTapCount >= 3) {
+      setShowButtons(true);
+      setDragPosition(DRAG_THRESHOLD);
+      setTapCount(0);
+      // Visual feedback
+      if (badgeRef.current) {
+        badgeRef.current.style.animation = "pulse 0.3s ease-in-out";
+      }
+    } else {
+      // Reset tap count after 1 second
+      tapTimeoutRef.current = setTimeout(() => {
+        setTapCount(0);
+      }, 1000);
+    }
   };
 
   const handleDragMove = useCallback(
@@ -149,10 +179,14 @@ export default function Hero() {
             <div
               ref={badgeRef}
               onMouseDown={handleDragStart}
-              onTouchStart={handleDragStart}
+              onTouchStart={e => {
+                // Prevent default to handle both tap and drag
+                handleDragStart(e);
+              }}
+              onClick={handleBadgeTap}
               className={`inline-flex items-center px-4 py-2 bg-primary-600/20 backdrop-blur-sm border border-primary-400/30 rounded-full animate-fade-in select-none touch-none ${
                 isDragging ? "cursor-grabbing scale-105" : "cursor-grab"
-              } transition-all duration-200 shadow-lg hover:shadow-xl`}
+              } transition-all duration-200 shadow-lg hover:shadow-xl active:scale-95`}
               style={{
                 transform: `translateX(${dragPosition}px)`,
               }}
@@ -167,6 +201,13 @@ export default function Hero() {
                 </span>
               )}
             </div>
+
+            {/* Mobile hint - show on smaller screens */}
+            {!showButtons && (
+              <div className="mt-2 text-xs text-primary-400/60 md:hidden animate-pulse">
+                Tap 3 times or drag to reveal →
+              </div>
+            )}
           </div>
 
           {/* Secret Buttons - Hidden until badge is dragged */}
