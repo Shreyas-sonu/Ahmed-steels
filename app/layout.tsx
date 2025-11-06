@@ -13,6 +13,7 @@ export const metadata: Metadata = {
     "Your trusted partner in steel & cement. Supplying quality construction materials for every project.",
   keywords:
     "steel, cement, construction materials, TMT bars, roofing sheets, ultratech cement",
+  viewport: "width=device-width, initial-scale=1",
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },

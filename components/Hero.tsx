@@ -19,15 +19,25 @@ export default function Hero() {
   const badgeRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const startXRef = useRef(0);
+  const pointerIdRef = useRef<number | null>(null);
   const tapTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Drag threshold - how far to drag to reveal buttons (in pixels)
   const DRAG_THRESHOLD = 150;
 
-  const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
+  // Use pointer events for consistent mouse/touch behavior
+  const handlePointerDown = (e: React.PointerEvent) => {
+    // Only react to primary pointer (finger or left mouse)
+    if (e.button && e.button !== 0) return;
     setIsDragging(true);
-    const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
-    startXRef.current = clientX - dragPosition;
+    pointerIdRef.current = e.pointerId;
+    // capture pointer so we continue receiving move/up even if pointer leaves the element
+    try {
+      badgeRef.current?.setPointerCapture?.(e.pointerId);
+    } catch (err) {
+      // ignore if not supported
+    }
+    startXRef.current = e.clientX - dragPosition;
   };
 
   // Mobile-friendly tap handler - triple tap to reveal
@@ -58,11 +68,13 @@ export default function Hero() {
     }
   };
 
-  const handleDragMove = useCallback(
-    (e: MouseEvent | TouchEvent) => {
+  const handlePointerMove = useCallback(
+    (e: PointerEvent) => {
       if (!isDragging) return;
+      // If pointerId is set, ignore other pointers
+      if (pointerIdRef.current && e.pointerId !== pointerIdRef.current) return;
 
-      const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
+      const clientX = e.clientX;
       const newPosition = clientX - startXRef.current;
 
       // Limit drag to positive values only (right direction) and max threshold
@@ -80,8 +92,9 @@ export default function Hero() {
     [isDragging, showButtons]
   );
 
-  const handleDragEnd = useCallback(() => {
+  const handlePointerUp = useCallback(() => {
     setIsDragging(false);
+    pointerIdRef.current = null;
 
     // If not dragged enough, snap back
     if (dragPosition < DRAG_THRESHOLD) {
@@ -91,23 +104,28 @@ export default function Hero() {
       // Keep it at the threshold position
       setDragPosition(DRAG_THRESHOLD);
     }
+    // release pointer capture if possible
+    try {
+      badgeRef.current?.releasePointerCapture?.(pointerIdRef.current ?? 0);
+    } catch (err) {
+      /* ignore */
+    }
   }, [dragPosition]);
 
   useEffect(() => {
+    // Attach pointer listeners to the window while dragging
     if (isDragging) {
-      window.addEventListener("mousemove", handleDragMove);
-      window.addEventListener("mouseup", handleDragEnd);
-      window.addEventListener("touchmove", handleDragMove);
-      window.addEventListener("touchend", handleDragEnd);
+      window.addEventListener("pointermove", handlePointerMove as any);
+      window.addEventListener("pointerup", handlePointerUp as any);
+      window.addEventListener("pointercancel", handlePointerUp as any);
 
       return () => {
-        window.removeEventListener("mousemove", handleDragMove);
-        window.removeEventListener("mouseup", handleDragEnd);
-        window.removeEventListener("touchmove", handleDragMove);
-        window.removeEventListener("touchend", handleDragEnd);
+        window.removeEventListener("pointermove", handlePointerMove as any);
+        window.removeEventListener("pointerup", handlePointerUp as any);
+        window.removeEventListener("pointercancel", handlePointerUp as any);
       };
     }
-  }, [isDragging, handleDragMove, handleDragEnd]);
+  }, [isDragging, handlePointerMove, handlePointerUp]);
 
   const handleButtonClick = (buttonIndex: number) => {
     const newSequence = [...clickSequence, buttonIndex];
@@ -178,11 +196,7 @@ export default function Hero() {
             {/* Draggable Badge */}
             <div
               ref={badgeRef}
-              onMouseDown={handleDragStart}
-              onTouchStart={e => {
-                // Prevent default to handle both tap and drag
-                handleDragStart(e);
-              }}
+              onPointerDown={handlePointerDown}
               onClick={handleBadgeTap}
               className={`inline-flex items-center px-4 py-2 bg-primary-600/20 backdrop-blur-sm border border-primary-400/30 rounded-full animate-fade-in select-none touch-none ${
                 isDragging ? "cursor-grabbing scale-105" : "cursor-grab"
@@ -235,8 +249,9 @@ export default function Hero() {
 
           {/* Subtext */}
           <p className="text-lg md:text-xl lg:text-2xl text-gray-300 mb-8 max-w-2xl leading-relaxed animate-slide-up-delay">
-            Supplying quality construction materials for every project. From TMT
-            bars to cement, we&apos;ve got your building needs covered.
+            Supplying quality construction materials for every Project /
+            Building needs. From TMT bars to cement, we&apos;ve got your
+            building needs covered.
           </p>
 
           {/* Features List */}
