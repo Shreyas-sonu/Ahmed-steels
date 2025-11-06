@@ -351,9 +351,10 @@ export default function PendingSalesPage() {
                           ₹{sale.amount_paid.toLocaleString()}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {((sale.amount_paid / sale.total_amount) * 100).toFixed(
-                            1
-                          )}
+                          {(
+                            (sale.amount_paid / sale.total_amount) *
+                            100
+                          ).toFixed(1)}
                           %
                         </div>
                       </td>

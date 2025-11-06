@@ -464,7 +464,10 @@ export default function SalesPage() {
                     type="text"
                     value={formData.customer_name}
                     onChange={e =>
-                      setFormData({ ...formData, customer_name: e.target.value })
+                      setFormData({
+                        ...formData,
+                        customer_name: e.target.value,
+                      })
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                     required
@@ -481,7 +484,10 @@ export default function SalesPage() {
                     type="text"
                     value={formData.customer_place}
                     onChange={e =>
-                      setFormData({ ...formData, customer_place: e.target.value })
+                      setFormData({
+                        ...formData,
+                        customer_place: e.target.value,
+                      })
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
@@ -495,7 +501,10 @@ export default function SalesPage() {
                     type="tel"
                     value={formData.customer_phone}
                     onChange={e =>
-                      setFormData({ ...formData, customer_phone: e.target.value })
+                      setFormData({
+                        ...formData,
+                        customer_phone: e.target.value,
+                      })
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                   />
@@ -555,7 +564,9 @@ export default function SalesPage() {
                     >
                       <input
                         type="checkbox"
-                        checked={formData.material_types.includes(category.name)}
+                        checked={formData.material_types.includes(
+                          category.name
+                        )}
                         onChange={() => toggleMaterialType(category.name)}
                         className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                       />
