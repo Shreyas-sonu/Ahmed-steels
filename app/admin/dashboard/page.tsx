@@ -1,17 +1,14 @@
 "use client";
 
+import AdminSidebar from "@/components/AdminSidebar";
 import { useAuth } from "@/context/AuthContext";
 import {
   Calendar,
   DollarSign,
-  LayoutDashboard,
-  LogOut,
   ShoppingCart,
-  Tags,
   TrendingUp,
   Users,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -26,7 +23,7 @@ import {
 } from "recharts";
 
 export default function AdminDashboard() {
-  const { isAuthenticated, username, logout } = useAuth();
+  const { isAuthenticated, username } = useAuth();
   const router = useRouter();
   const [salesData, setSalesData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
@@ -86,103 +83,35 @@ export default function AdminDashboard() {
     }
   }, [selectedMonth, salesData]);
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
-
   if (!isAuthenticated) {
     return null;
   }
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white">
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-6 border-b border-gray-800">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-                <LayoutDashboard className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">Ahmed Steels</h1>
-                <p className="text-xs text-gray-400">Admin Panel</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-2">
-            <Link
-              href="/admin/dashboard"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary-600 text-white"
-            >
-              <LayoutDashboard className="w-5 h-5" />
-              <span>Dashboard</span>
-            </Link>
-            <Link
-              href="/admin/categories"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <Tags className="w-5 h-5" />
-              <span>Categories</span>
-            </Link>
-            <Link
-              href="/admin/sales"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span>All Sales</span>
-            </Link>
-            <Link
-              href="/admin/pending"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <DollarSign className="w-5 h-5" />
-              <span>Pending Sales</span>
-            </Link>
-          </nav>
-
-          {/* User Info & Logout */}
-          <div className="p-4 border-t border-gray-800">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-sm font-medium">{username}</p>
-                <p className="text-xs text-gray-400">Administrator</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
-      <div className="ml-64 p-8">
+      <div className="lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+        <div className="mb-6 lg:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+            Dashboard
+          </h1>
           <p className="text-gray-600 mt-1">Welcome back, {username}!</p>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8">
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Total Sales</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900">
                   {stats.totalSales}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <ShoppingCart className="w-6 h-6 text-blue-600" />
               </div>
             </div>
@@ -190,13 +119,13 @@ export default function AdminDashboard() {
 
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900">
                   ₹{stats.totalRevenue.toLocaleString()}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <TrendingUp className="w-6 h-6 text-green-600" />
               </div>
             </div>
@@ -204,13 +133,13 @@ export default function AdminDashboard() {
 
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Pending Amount</p>
-                <p className="text-3xl font-bold text-red-600">
+                <p className="text-2xl sm:text-3xl font-bold text-red-600">
                   ₹{stats.pendingAmount.toLocaleString()}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <DollarSign className="w-6 h-6 text-red-600" />
               </div>
             </div>
@@ -218,13 +147,13 @@ export default function AdminDashboard() {
 
           <div className="bg-white rounded-xl shadow-md p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Total Customers</p>
-                <p className="text-3xl font-bold text-gray-900">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900">
                   {stats.totalCustomers}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
                 <Users className="w-6 h-6 text-purple-600" />
               </div>
             </div>
@@ -232,53 +161,55 @@ export default function AdminDashboard() {
         </div>
 
         {/* Sales Chart */}
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-900">
+        <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900">
               Monthly Sales Overview
             </h2>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <Calendar className="w-5 h-5 text-gray-500" />
-                <select
-                  value={selectedMonth}
-                  onChange={e => setSelectedMonth(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                >
-                  <option value="all">All Months</option>
-                  <option value="Jan">January</option>
-                  <option value="Feb">February</option>
-                  <option value="Mar">March</option>
-                  <option value="Apr">April</option>
-                  <option value="May">May</option>
-                  <option value="Jun">June</option>
-                  <option value="Jul">July</option>
-                  <option value="Aug">August</option>
-                  <option value="Sep">September</option>
-                  <option value="Oct">October</option>
-                  <option value="Nov">November</option>
-                  <option value="Dec">December</option>
-                </select>
-              </div>
+            <div className="flex items-center space-x-2">
+              <Calendar className="w-5 h-5 text-gray-500 flex-shrink-0" />
+              <select
+                value={selectedMonth}
+                onChange={e => setSelectedMonth(e.target.value)}
+                className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              >
+                <option value="all">All Months</option>
+                <option value="Jan">January</option>
+                <option value="Feb">February</option>
+                <option value="Mar">March</option>
+                <option value="Apr">April</option>
+                <option value="May">May</option>
+                <option value="Jun">June</option>
+                <option value="Jul">July</option>
+                <option value="Aug">August</option>
+                <option value="Sep">September</option>
+                <option value="Oct">October</option>
+                <option value="Nov">November</option>
+                <option value="Dec">December</option>
+              </select>
             </div>
           </div>
-          <ResponsiveContainer width="100%" height={400}>
-            <BarChart data={filteredData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip
-                formatter={value => `₹${Number(value).toLocaleString()}`}
-                contentStyle={{
-                  backgroundColor: "#fff",
-                  border: "1px solid #e5e7eb",
-                  borderRadius: "8px",
-                }}
-              />
-              <Legend />
-              <Bar dataKey="sales" fill="#0284c7" name="Total Sales (₹)" />
-            </BarChart>
-          </ResponsiveContainer>
+          <div className="w-full overflow-x-auto">
+            <div className="min-w-[500px]">
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={filteredData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip
+                    formatter={value => `₹${Number(value).toLocaleString()}`}
+                    contentStyle={{
+                      backgroundColor: "#fff",
+                      border: "1px solid #e5e7eb",
+                      borderRadius: "8px",
+                    }}
+                  />
+                  <Legend />
+                  <Bar dataKey="sales" fill="#0284c7" name="Total Sales (₹)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
         </div>
       </div>
     </div>

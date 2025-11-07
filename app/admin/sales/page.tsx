@@ -1,21 +1,9 @@
 "use client";
 
+import AdminSidebar from "@/components/AdminSidebar";
 import { useAuth } from "@/context/AuthContext";
 import { Category, supabase } from "@/lib/supabase";
-import {
-  DollarSign,
-  Edit2,
-  Filter,
-  LayoutDashboard,
-  LogOut,
-  Plus,
-  Save,
-  ShoppingCart,
-  Tags,
-  Trash2,
-  X,
-} from "lucide-react";
-import Link from "next/link";
+import { Edit2, Filter, Plus, Save, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -35,7 +23,7 @@ interface Sale {
 }
 
 export default function SalesPage() {
-  const { isAuthenticated, username, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [sales, setSales] = useState<Sale[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
@@ -186,11 +174,6 @@ export default function SalesPage() {
     }));
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
-
   const filteredSales = sales.filter(
     sale =>
       sale.customer_name.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -202,82 +185,22 @@ export default function SalesPage() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white">
-        <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-gray-800">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-                <LayoutDashboard className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">Ahmed Steels</h1>
-                <p className="text-xs text-gray-400">Admin Panel</p>
-              </div>
-            </div>
-          </div>
-
-          <nav className="flex-1 p-4 space-y-2">
-            <Link
-              href="/admin/dashboard"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <LayoutDashboard className="w-5 h-5" />
-              <span>Dashboard</span>
-            </Link>
-            <Link
-              href="/admin/categories"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <Tags className="w-5 h-5" />
-              <span>Categories</span>
-            </Link>
-            <Link
-              href="/admin/sales"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary-600 text-white"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span>All Sales</span>
-            </Link>
-            <Link
-              href="/admin/pending"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <DollarSign className="w-5 h-5" />
-              <span>Pending Sales</span>
-            </Link>
-          </nav>
-
-          <div className="p-4 border-t border-gray-800">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-sm font-medium">{username}</p>
-                <p className="text-xs text-gray-400">Administrator</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
-      <div className="ml-64 p-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 lg:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">All Sales</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              All Sales
+            </h1>
             <p className="text-gray-600 mt-1">
               Manage customer sales and orders
             </p>
           </div>
           <button
             onClick={handleAdd}
-            className="flex items-center space-x-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-lg"
+            className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-lg whitespace-nowrap"
           >
             <Plus className="w-5 h-5" />
             <span>Add Sale</span>
@@ -285,7 +208,7 @@ export default function SalesPage() {
         </div>
 
         {/* Filter */}
-        <div className="mb-6">
+        <div className="mb-4 sm:mb-6">
           <div className="relative">
             <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
@@ -293,7 +216,7 @@ export default function SalesPage() {
               placeholder="Search by customer name, place, or phone..."
               value={filterText}
               onChange={e => setFilterText(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full pl-10 pr-4 py-2 sm:py-3 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
             />
           </div>
         </div>

@@ -1,26 +1,15 @@
 "use client";
 
+import AdminSidebar from "@/components/AdminSidebar";
 import { useAuth } from "@/context/AuthContext";
 import { Category, supabase } from "@/lib/supabase";
-import {
-  DollarSign,
-  Edit2,
-  LayoutDashboard,
-  LogOut,
-  Plus,
-  Save,
-  ShoppingCart,
-  Tags,
-  Trash2,
-  X,
-} from "lucide-react";
-import Link from "next/link";
+import { Edit2, Plus, Save, Trash2, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function CategoriesPage() {
-  const { isAuthenticated, username, logout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const router = useRouter();
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -118,84 +107,17 @@ export default function CategoriesPage() {
     }
   };
 
-  const handleLogout = () => {
-    logout();
-    router.push("/");
-  };
-
   if (!isAuthenticated) return null;
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Sidebar - Same as dashboard */}
-      <div className="fixed inset-y-0 left-0 w-64 bg-gray-900 text-white">
-        <div className="flex flex-col h-full">
-          <div className="p-6 border-b border-gray-800">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-primary-600 rounded-lg flex items-center justify-center">
-                <LayoutDashboard className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-white">Ahmed Steels</h1>
-                <p className="text-xs text-gray-400">Admin Panel</p>
-              </div>
-            </div>
-          </div>
-
-          <nav className="flex-1 p-4 space-y-2">
-            <Link
-              href="/admin/dashboard"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <LayoutDashboard className="w-5 h-5" />
-              <span>Dashboard</span>
-            </Link>
-            <Link
-              href="/admin/categories"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg bg-primary-600 text-white"
-            >
-              <Tags className="w-5 h-5" />
-              <span>Categories</span>
-            </Link>
-            <Link
-              href="/admin/sales"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <ShoppingCart className="w-5 h-5" />
-              <span>All Sales</span>
-            </Link>
-            <Link
-              href="/admin/pending"
-              className="flex items-center space-x-3 px-4 py-3 rounded-lg hover:bg-gray-800 transition-colors"
-            >
-              <DollarSign className="w-5 h-5" />
-              <span>Pending Sales</span>
-            </Link>
-          </nav>
-
-          <div className="p-4 border-t border-gray-800">
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <p className="text-sm font-medium">{username}</p>
-                <p className="text-xs text-gray-400">Administrator</p>
-              </div>
-            </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
-            >
-              <LogOut className="w-4 h-4" />
-              <span>Logout</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
-      <div className="ml-64 p-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 lg:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
               Material Categories
             </h1>
             <p className="text-gray-600 mt-1">
@@ -204,7 +126,7 @@ export default function CategoriesPage() {
           </div>
           <button
             onClick={handleAdd}
-            className="flex items-center space-x-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-lg"
+            className="flex items-center justify-center space-x-2 px-4 sm:px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-lg transition-colors shadow-lg whitespace-nowrap"
           >
             <Plus className="w-5 h-5" />
             <span>Add Category</span>
@@ -213,87 +135,91 @@ export default function CategoriesPage() {
 
         {/* Categories Table */}
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {isLoading ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
                 <tr>
-                  <td
-                    colSpan={4}
-                    className="px-4 py-6 text-center text-gray-500 text-sm"
-                  >
-                    Loading...
-                  </td>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Name
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Description
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
                 </tr>
-              ) : categories.length === 0 ? (
-                <tr>
-                  <td
-                    colSpan={4}
-                    className="px-4 py-6 text-center text-gray-500 text-sm"
-                  >
-                    No categories found. Add your first category!
-                  </td>
-                </tr>
-              ) : (
-                categories.map(category => (
-                  <tr key={category.id} className="hover:bg-gray-50">
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
-                        {category.name}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="text-sm text-gray-600 line-clamp-2">
-                        {category.description || "-"}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span
-                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          category.is_active
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
-                        }`}
-                      >
-                        {category.is_active ? "Active" : "Inactive"}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleEdit(category)}
-                        className="text-blue-600 hover:text-blue-900 mr-3"
-                        title="Edit"
-                      >
-                        <Edit2 className="w-4 h-4 inline" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(category.id, category.name)}
-                        className="text-red-600 hover:text-red-900"
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4 inline" />
-                      </button>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {isLoading ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-4 py-6 text-center text-gray-500 text-sm"
+                    >
+                      Loading...
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : categories.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={4}
+                      className="px-4 py-6 text-center text-gray-500 text-sm"
+                    >
+                      No categories found. Add your first category!
+                    </td>
+                  </tr>
+                ) : (
+                  categories.map(category => (
+                    <tr key={category.id} className="hover:bg-gray-50">
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">
+                          {category.name}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="text-sm text-gray-600 line-clamp-2">
+                          {category.description || "-"}
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap">
+                        <span
+                          className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            category.is_active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        >
+                          {category.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
+                        <button
+                          onClick={() => handleEdit(category)}
+                          className="text-blue-600 hover:text-blue-900 mr-3"
+                          title="Edit"
+                        >
+                          <Edit2 className="w-4 h-4 inline" />
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleDelete(category.id, category.name)
+                          }
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete"
+                        >
+                          <Trash2 className="w-4 h-4 inline" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
