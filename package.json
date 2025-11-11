@@ -13,6 +13,7 @@
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.7.0",
     "@supabase/supabase-js": "^2.79.0",
+    "@types/web-push": "^3.6.4",
     "bcryptjs": "^3.0.3",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.441.0",
@@ -23,7 +24,8 @@
     "react-hot-toast": "^2.6.0",
     "recharts": "^3.3.0",
     "resend": "^6.4.0",
-    "swiper": "^11.1.14"
+    "swiper": "^11.1.14",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@types/js-cookie": "^3.0.6",
