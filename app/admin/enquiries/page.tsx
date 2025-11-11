@@ -1,11 +1,16 @@
 "use client";
 
+import AdminSidebar from "@/components/AdminSidebar";
+import { useAuth } from "@/context/AuthContext";
 import { supabase, type Enquiry } from "@/lib/supabase";
 import { Check, Clock, MapPin, Phone, Search, User, X } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function EnquiriesPage() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [filteredEnquiries, setFilteredEnquiries] = useState<Enquiry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,6 +23,11 @@ export default function EnquiriesPage() {
   >("all");
 
   useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/admin/login");
+      return;
+    }
+
     fetchEnquiries();
     autoExpireEnquiries();
 
@@ -37,7 +47,7 @@ export default function EnquiriesPage() {
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [isAuthenticated, router]);
 
   useEffect(() => {
     filterEnquiries();
@@ -176,22 +186,27 @@ export default function EnquiriesPage() {
     return !enquiry.attended && getDaysOld(enquiry.created_at) > 2;
   };
 
+  if (!isAuthenticated) return null;
+
   return (
-    <div className="p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-gray-100">
+      <AdminSidebar />
+
+      {/* Main Content */}
+      <div className="lg:ml-64 p-4 sm:p-6 lg:p-8 pt-20 lg:pt-8">
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+        <div className="mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">
             Customer Enquiries
           </h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 text-sm">
             Manage and track all customer enquiries
           </p>
         </div>
 
         {/* Filters */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {/* Search */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -230,28 +245,28 @@ export default function EnquiriesPage() {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <div className="text-sm text-gray-600 mb-1">Total Enquiries</div>
-            <div className="text-2xl font-bold text-gray-900">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+          <div className="bg-white rounded-lg shadow-sm p-3">
+            <div className="text-xs text-gray-600 mb-0.5">Total</div>
+            <div className="text-xl font-bold text-gray-900">
               {enquiries.length}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <div className="text-sm text-gray-600 mb-1">Pending</div>
-            <div className="text-2xl font-bold text-orange-600">
+          <div className="bg-white rounded-lg shadow-sm p-3">
+            <div className="text-xs text-gray-600 mb-0.5">Pending</div>
+            <div className="text-xl font-bold text-orange-600">
               {enquiries.filter(e => !e.attended).length}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <div className="text-sm text-gray-600 mb-1">Attended</div>
-            <div className="text-2xl font-bold text-green-600">
+          <div className="bg-white rounded-lg shadow-sm p-3">
+            <div className="text-xs text-gray-600 mb-0.5">Attended</div>
+            <div className="text-xl font-bold text-green-600">
               {enquiries.filter(e => e.attended).length}
             </div>
           </div>
-          <div className="bg-white rounded-lg shadow-sm p-4">
-            <div className="text-sm text-gray-600 mb-1">Expired (2+ days)</div>
-            <div className="text-2xl font-bold text-red-600">
+          <div className="bg-white rounded-lg shadow-sm p-3">
+            <div className="text-xs text-gray-600 mb-0.5">Expired</div>
+            <div className="text-xl font-bold text-red-600">
               {enquiries.filter(e => isExpired(e)).length}
             </div>
           </div>
@@ -260,13 +275,13 @@ export default function EnquiriesPage() {
         {/* Enquiries Table */}
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           {loading ? (
-            <div className="p-8 text-center">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-              <p className="mt-4 text-gray-600">Loading enquiries...</p>
+            <div className="p-6 text-center">
+              <div className="inline-block animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
+              <p className="mt-3 text-gray-600 text-sm">Loading enquiries...</p>
             </div>
           ) : filteredEnquiries.length === 0 ? (
-            <div className="p-8 text-center">
-              <p className="text-gray-600">No enquiries found</p>
+            <div className="p-6 text-center">
+              <p className="text-gray-600 text-sm">No enquiries found</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
@@ -275,37 +290,37 @@ export default function EnquiriesPage() {
                   <tr>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
-                      Customer Details
+                      Customer
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
                       Contact
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell"
+                      className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden lg:table-cell"
                     >
                       Requirements
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell"
+                      className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider hidden md:table-cell"
                     >
                       Date
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
                       Status
                     </th>
                     <th
                       scope="col"
-                      className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                      className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
                     >
                       Actions
                     </th>
@@ -320,16 +335,16 @@ export default function EnquiriesPage() {
                       } hover:bg-gray-50 transition-colors`}
                     >
                       {/* Customer Details */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 bg-primary-100 rounded-full flex items-center justify-center">
-                            <User className="h-5 w-5 text-primary-600" />
+                      <td className="px-4 py-2">
+                        <div className="flex items-center gap-2">
+                          <div className="flex-shrink-0 h-8 w-8 bg-primary-100 rounded-full flex items-center justify-center">
+                            <User className="h-4 w-4 text-primary-600" />
                           </div>
-                          <div className="ml-4">
+                          <div>
                             <div className="text-sm font-medium text-gray-900">
                               {enquiry.name}
                             </div>
-                            <div className="text-sm text-gray-500 flex items-center gap-1">
+                            <div className="text-xs text-gray-500 flex items-center gap-1">
                               <MapPin className="w-3 h-3" />
                               {enquiry.place}
                             </div>
@@ -338,9 +353,9 @@ export default function EnquiriesPage() {
                       </td>
 
                       {/* Contact */}
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center gap-1 text-sm text-gray-900">
-                          <Phone className="w-4 h-4 text-gray-400" />
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <div className="flex items-center gap-1 text-xs text-gray-900">
+                          <Phone className="w-3 h-3 text-gray-400" />
                           <a
                             href={`tel:${enquiry.phone}`}
                             className="hover:text-primary-600"
@@ -351,37 +366,37 @@ export default function EnquiriesPage() {
                       </td>
 
                       {/* Requirements - Hidden on mobile */}
-                      <td className="px-6 py-4 hidden lg:table-cell">
-                        <div className="text-sm text-gray-900 max-w-xs truncate">
+                      <td className="px-4 py-2 hidden lg:table-cell">
+                        <div className="text-xs text-gray-900 max-w-xs truncate">
                           {enquiry.description}
                         </div>
                       </td>
 
                       {/* Date - Hidden on small screens */}
-                      <td className="px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                        <div className="text-sm text-gray-900">
+                      <td className="px-4 py-2 whitespace-nowrap hidden md:table-cell">
+                        <div className="text-xs text-gray-900">
                           {formatDate(enquiry.created_at)}
                         </div>
-                        <div className="text-xs text-gray-500 flex items-center gap-1 mt-1">
+                        <div className="text-xs text-gray-500 flex items-center gap-1 mt-0.5">
                           <Clock className="w-3 h-3" />
-                          {getDaysOld(enquiry.created_at)} day(s) ago
+                          {getDaysOld(enquiry.created_at)}d ago
                         </div>
                       </td>
 
                       {/* Status */}
-                      <td className="px-6 py-4 whitespace-nowrap">
+                      <td className="px-4 py-2 whitespace-nowrap">
                         <div className="flex flex-col gap-1">
                           {enquiry.attended ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 w-fit">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap w-fit">
                               Attended
                             </span>
                           ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 w-fit">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800 whitespace-nowrap w-fit">
                               Pending
                             </span>
                           )}
                           {isExpired(enquiry) && (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 w-fit">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 whitespace-nowrap w-fit">
                               Expired
                             </span>
                           )}
@@ -389,11 +404,11 @@ export default function EnquiriesPage() {
                       </td>
 
                       {/* Actions */}
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex items-center justify-end gap-2">
+                      <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => toggleAttended(enquiry)}
-                            className={`inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium transition-colors ${
+                            className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium transition-colors ${
                               enquiry.attended
                                 ? "bg-orange-100 text-orange-700 hover:bg-orange-200"
                                 : "bg-green-100 text-green-700 hover:bg-green-200"
@@ -405,20 +420,17 @@ export default function EnquiriesPage() {
                             }
                           >
                             {enquiry.attended ? (
-                              <X className="w-3.5 h-3.5" />
+                              <X className="w-3 h-3" />
                             ) : (
-                              <Check className="w-3.5 h-3.5" />
+                              <Check className="w-3 h-3" />
                             )}
-                            <span className="ml-1 hidden xl:inline">
-                              {enquiry.attended ? "Pending" : "Attended"}
-                            </span>
                           </button>
                           <button
                             onClick={() => deleteEnquiry(enquiry.id)}
-                            className="inline-flex items-center px-3 py-1.5 bg-red-100 text-red-700 rounded-md text-xs font-medium hover:bg-red-200 transition-colors"
+                            className="inline-flex items-center px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-medium hover:bg-red-200 transition-colors"
                             title="Delete"
                           >
-                            <X className="w-3.5 h-3.5" />
+                            <X className="w-3 h-3" />
                           </button>
                         </div>
                       </td>

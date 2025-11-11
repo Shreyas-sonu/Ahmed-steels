@@ -98,14 +98,14 @@ export default function NotificationSettings() {
 
   if (!isSupported) {
     return (
-      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-        <div className="flex items-center gap-3">
-          <BellOff className="w-6 h-6 text-yellow-600" />
+      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="flex items-center gap-2">
+          <BellOff className="w-5 h-5 text-yellow-600" />
           <div>
-            <h3 className="font-semibold text-yellow-900">
+            <h3 className="font-semibold text-yellow-900 text-sm">
               Push Notifications Not Supported
             </h3>
-            <p className="text-sm text-yellow-700 mt-1">
+            <p className="text-xs text-yellow-700 mt-0.5">
               Your browser doesn&apos;t support push notifications. Please use a
               modern browser like Chrome, Firefox, or Edge.
             </p>
@@ -116,38 +116,37 @@ export default function NotificationSettings() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-6">
-      <div className="flex items-center gap-3 mb-6">
-        <Bell className="w-6 h-6 text-primary-600" />
+    <div className="bg-white rounded-lg shadow-sm p-4">
+      <div className="flex items-center gap-2 mb-4">
+        <Bell className="w-5 h-5 text-primary-600" />
         <div>
-          <h2 className="text-xl font-bold text-gray-900">
+          <h2 className="text-lg font-bold text-gray-900">
             Push Notifications
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-xs text-gray-600">
             Receive notifications for new enquiries and sales reminders
           </p>
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {/* Status */}
-        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
           <div>
-            <div className="font-medium text-gray-900">Notification Status</div>
-            <div className="text-sm text-gray-600 mt-1">
-              Permission:{" "}
-              <span className="font-medium capitalize">{permission}</span>
+            <div className="font-medium text-gray-900 text-sm">Status</div>
+            <div className="text-xs text-gray-600">
+              <span className="capitalize">{permission}</span>
             </div>
           </div>
           <div>
             {isSubscribed ? (
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                <Bell className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs font-medium">
+                <Bell className="w-3 h-3" />
                 Active
               </span>
             ) : (
-              <span className="inline-flex items-center gap-2 px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-sm font-medium">
-                <BellOff className="w-4 h-4" />
+              <span className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-medium">
+                <BellOff className="w-3 h-3" />
                 Inactive
               </span>
             )}
@@ -157,19 +156,19 @@ export default function NotificationSettings() {
         {!isSubscribed ? (
           <>
             {/* Subscribe Form */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <label className="block">
-                <span className="text-sm font-medium text-gray-700">
+                <span className="text-xs font-medium text-gray-700">
                   Device Name
                 </span>
                 <div className="mt-1 relative">
-                  <Smartphone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Smartphone className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                   <input
                     type="text"
                     value={deviceName}
                     onChange={e => setDeviceName(e.target.value)}
-                    placeholder="e.g., Owner's Phone, Admin Tablet"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="e.g., Owner's Phone"
+                    className="w-full pl-8 pr-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                   />
                 </div>
               </label>
@@ -177,33 +176,30 @@ export default function NotificationSettings() {
               <button
                 onClick={handleSubscribe}
                 disabled={loading || !deviceName.trim()}
-                className="w-full btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full btn-primary text-sm py-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Subscribing..." : "Enable Notifications"}
               </button>
             </div>
 
             {/* Info */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-medium text-blue-900 mb-2">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <h4 className="font-medium text-blue-900 mb-1 text-xs">
                 What you&apos;ll receive:
               </h4>
-              <ul className="text-sm text-blue-800 space-y-1">
-                <li>
-                  • Instant notifications when new enquiries are submitted
-                </li>
-                <li>• Daily reminders at 9 AM and 9 PM IST to review sales</li>
-                <li>• Important updates about your business</li>
+              <ul className="text-xs text-blue-800 space-y-0.5">
+                <li>• Instant notifications for new enquiries</li>
+                <li>• Daily reminders at 9 AM & 9 PM IST</li>
               </ul>
             </div>
           </>
         ) : (
           <>
             {/* Active Subscription */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <button
                 onClick={handleTestNotification}
-                className="w-full px-4 py-2 bg-primary-100 text-primary-700 rounded-lg font-medium hover:bg-primary-200 transition-colors"
+                className="w-full px-3 py-2 text-sm bg-primary-100 text-primary-700 rounded-lg font-medium hover:bg-primary-200 transition-colors"
               >
                 Send Test Notification
               </button>
@@ -211,7 +207,7 @@ export default function NotificationSettings() {
               <button
                 onClick={handleUnsubscribe}
                 disabled={loading}
-                className="w-full px-4 py-2 bg-red-100 text-red-700 rounded-lg font-medium hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 text-sm bg-red-100 text-red-700 rounded-lg font-medium hover:bg-red-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? "Unsubscribing..." : "Disable Notifications"}
               </button>
@@ -220,18 +216,18 @@ export default function NotificationSettings() {
         )}
 
         {/* Reminder Schedule */}
-        <div className="border-t pt-4 mt-4">
-          <h4 className="font-medium text-gray-900 mb-3">
+        <div className="border-t pt-3 mt-3">
+          <h4 className="font-medium text-gray-900 mb-2 text-xs">
             Reminder Schedule (IST)
           </h4>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="p-3 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
-              <div className="text-2xl font-bold text-orange-900">9:00 AM</div>
-              <div className="text-sm text-orange-700">Morning Reminder</div>
+          <div className="grid grid-cols-2 gap-2">
+            <div className="p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
+              <div className="text-lg font-bold text-orange-900">9:00 AM</div>
+              <div className="text-xs text-orange-700">Morning</div>
             </div>
-            <div className="p-3 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
-              <div className="text-2xl font-bold text-purple-900">9:00 PM</div>
-              <div className="text-sm text-purple-700">Evening Reminder</div>
+            <div className="p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+              <div className="text-lg font-bold text-purple-900">9:00 PM</div>
+              <div className="text-xs text-purple-700">Evening</div>
             </div>
           </div>
         </div>
