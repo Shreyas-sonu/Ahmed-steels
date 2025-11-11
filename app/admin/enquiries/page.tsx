@@ -1,16 +1,7 @@
 "use client";
 
 import { supabase, type Enquiry } from "@/lib/supabase";
-import {
-  Calendar,
-  Check,
-  Clock,
-  MapPin,
-  Phone,
-  Search,
-  User,
-  X,
-} from "lucide-react";
+import { Check, Clock, MapPin, Phone, Search, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
