@@ -290,13 +290,13 @@ export default function SalesPage() {
                           {sale.material_types?.slice(0, 2).map((mat, idx) => (
                             <span
                               key={idx}
-                              className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full"
+                              className="inline-flex items-center px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full whitespace-nowrap"
                             >
                               {mat}
                             </span>
                           ))}
                           {sale.material_types?.length > 2 && (
-                            <span className="px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded-full">
+                            <span className="inline-flex items-center px-2 py-0.5 text-xs bg-gray-100 text-gray-600 rounded-full whitespace-nowrap">
                               +{sale.material_types.length - 2}
                             </span>
                           )}

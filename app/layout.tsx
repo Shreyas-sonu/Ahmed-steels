@@ -14,12 +14,32 @@ export const metadata: Metadata = {
   keywords:
     "steel, cement, construction materials, TMT bars, roofing sheets, ultratech cement",
   viewport: "width=device-width, initial-scale=1",
+  manifest: "/manifest.json",
+  themeColor: "#0284c7",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Ahmed Steels",
+  },
   icons: {
     icon: [
       { url: "/favicon.svg", type: "image/svg+xml" },
       { url: "/logo.svg", type: "image/svg+xml" },
+      {
+        url: "/android/android-launchericon-192-192.png",
+        sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/android/android-launchericon-512-512.png",
+        sizes: "512x512",
+        type: "image/png",
+      },
     ],
-    apple: "/logo.svg",
+    apple: [
+      { url: "/ios/152.png", sizes: "152x152", type: "image/png" },
+      { url: "/ios/192.png", sizes: "192x192", type: "image/png" },
+    ],
   },
 };
 

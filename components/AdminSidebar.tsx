@@ -2,10 +2,12 @@
 
 import { useAuth } from "@/context/AuthContext";
 import {
+  ClipboardList,
   DollarSign,
   LayoutDashboard,
   LogOut,
   Menu,
+  Settings,
   ShoppingCart,
   Tags,
   X,
@@ -49,6 +51,16 @@ export default function AdminSidebar() {
       href: "/admin/pending",
       icon: DollarSign,
       label: "Pending Sales",
+    },
+    {
+      href: "/admin/enquiries",
+      icon: ClipboardList,
+      label: "Enquiries",
+    },
+    {
+      href: "/admin/settings",
+      icon: Settings,
+      label: "Settings",
     },
   ];
 

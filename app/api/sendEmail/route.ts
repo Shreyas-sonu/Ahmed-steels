@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
@@ -14,6 +15,26 @@ export async function POST(request: NextRequest) {
         { error: "All fields are required" },
         { status: 400 }
       );
+    }
+
+    // Save enquiry to database
+    const { data: enquiryData, error: enquiryError } = await supabase
+      .from("enquiries")
+      .insert([
+        {
+          name,
+          phone,
+          place,
+          description,
+          attended: false,
+        },
+      ])
+      .select()
+      .single();
+
+    if (enquiryError) {
+      console.error("Error saving enquiry:", enquiryError);
+      // Continue with email even if database save fails
     }
 
     // Send email using Resend
@@ -121,6 +142,24 @@ export async function POST(request: NextRequest) {
         </html>
       `,
     });
+
+    // Send push notification to subscribed devices
+    if (enquiryData) {
+      try {
+        await fetch(`${request.nextUrl.origin}/api/push/send-enquiry`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            enquiry: enquiryData,
+          }),
+        });
+      } catch (pushError) {
+        console.error("Error sending push notification:", pushError);
+        // Don't fail the request if push notification fails
+      }
+    }
 
     return NextResponse.json(
       { message: "Email sent successfully" },
