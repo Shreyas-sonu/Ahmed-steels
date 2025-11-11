@@ -38,3 +38,24 @@ export type Payment = {
   comments?: string;
   created_at: string;
 };
+
+export type Enquiry = {
+  id: string;
+  name: string;
+  phone: string;
+  place: string;
+  description: string;
+  attended: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PushSubscription = {
+  id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  device_name?: string;
+  is_active: boolean;
+  created_at: string;
+};
