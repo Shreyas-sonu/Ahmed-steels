@@ -51,10 +51,14 @@ self.addEventListener("push", event => {
 
   const data = event.data.json();
   const title = data.title || "Ahmed Steels";
+
+  // Use absolute URLs for icons
+  const baseUrl = self.location.origin;
+
   const options = {
     body: data.body || "You have a new notification",
-    icon: data.icon || "/android/android-launchericon-192-192.png",
-    badge: data.badge || "/badge-72x72.png",
+    icon: data.icon || `${baseUrl}/logo.png`,
+    badge: data.badge || `${baseUrl}/badge-72x72.png`,
     tag: data.tag || "notification",
     data: data.data || {},
     vibrate: [200, 100, 200],

@@ -47,12 +47,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Get the base URL for absolute icon paths
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "https://ahmed-steels.vercel.app";
+
     // Prepare notification payload
     const notificationPayload = JSON.stringify({
       title: "🔔 New Enquiry Received!",
       body: `${enquiry.name} from ${enquiry.place}`,
-      icon: "/android/android-launchericon-192-192.png",
-      badge: "/badge-72x72.png",
+      icon: `${baseUrl}/logo.png`,
+      badge: `${baseUrl}/badge-72x72.png`,
       tag: "new-enquiry",
       data: {
         url: "/admin/enquiries",

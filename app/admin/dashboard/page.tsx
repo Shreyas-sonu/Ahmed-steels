@@ -2,6 +2,7 @@
 
 import AdminSidebar from "@/components/AdminSidebar";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
 import {
   Calendar,
   DollarSign,
@@ -22,13 +23,22 @@ import {
   YAxis,
 } from "recharts";
 
+interface Sale {
+  id: string;
+  date: string;
+  customer_name: string;
+  total_amount: number;
+  amount_paid: number;
+  balance: number;
+}
+
 export default function AdminDashboard() {
   const { isAuthenticated, username } = useAuth();
   const router = useRouter();
   const [salesData, setSalesData] = useState<any[]>([]);
   const [filteredData, setFilteredData] = useState<any[]>([]);
   const [selectedMonth, setSelectedMonth] = useState<string>("all");
-  const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalSales: 0,
     totalRevenue: 0,
@@ -42,35 +52,88 @@ export default function AdminDashboard() {
       return;
     }
 
-    // Fetch sales data (mock data for now - will connect to Supabase)
     fetchDashboardData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, router]);
 
   const fetchDashboardData = async () => {
-    // Mock data - Replace with actual Supabase queries
-    const mockSalesData = [
-      { month: "Jan", sales: 45000 },
-      { month: "Feb", sales: 52000 },
-      { month: "Mar", sales: 48000 },
-      { month: "Apr", sales: 61000 },
-      { month: "May", sales: 55000 },
-      { month: "Jun", sales: 67000 },
-      { month: "Jul", sales: 72000 },
-      { month: "Aug", sales: 68000 },
-      { month: "Sep", sales: 75000 },
-      { month: "Oct", sales: 80000 },
-      { month: "Nov", sales: 78000 },
-      { month: "Dec", sales: 85000 },
-    ];
+    try {
+      setLoading(true);
 
-    setSalesData(mockSalesData);
-    setFilteredData(mockSalesData);
-    setStats({
-      totalSales: 156,
-      totalRevenue: 786000,
-      pendingAmount: 45000,
-      totalCustomers: 89,
+      // Fetch all sales from Supabase
+      const { data: sales, error } = await supabase
+        .from("sales")
+        .select("*")
+        .order("date", { ascending: true });
+
+      if (error) throw error;
+
+      // Process data for monthly chart
+      const monthlyData = processMonthlyData(sales || []);
+      setSalesData(monthlyData);
+      setFilteredData(monthlyData);
+
+      // Calculate stats
+      const totalSales = sales?.length || 0;
+      const totalRevenue =
+        sales?.reduce(
+          (sum: number, sale: Sale) => sum + sale.total_amount,
+          0
+        ) || 0;
+      const pendingAmount =
+        sales?.reduce((sum: number, sale: Sale) => sum + sale.balance, 0) || 0;
+      const uniqueCustomers = new Set(
+        sales?.map((sale: Sale) => sale.customer_name)
+      ).size;
+
+      setStats({
+        totalSales,
+        totalRevenue,
+        pendingAmount,
+        totalCustomers: uniqueCustomers,
+      });
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const processMonthlyData = (sales: Sale[]) => {
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+    const currentYear = new Date().getFullYear();
+
+    // Initialize all months with 0
+    const monthlyTotals = monthNames.map(month => ({
+      month,
+      sales: 0,
+      count: 0,
+    }));
+
+    // Aggregate sales by month
+    sales.forEach((sale: Sale) => {
+      const saleDate = new Date(sale.date);
+      if (saleDate.getFullYear() === currentYear) {
+        const monthIndex = saleDate.getMonth();
+        monthlyTotals[monthIndex].sales += sale.total_amount;
+        monthlyTotals[monthIndex].count += 1;
+      }
     });
+
+    return monthlyTotals;
   };
 
   useEffect(() => {
@@ -108,7 +171,7 @@ export default function AdminDashboard() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Total Sales</p>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  {stats.totalSales}
+                  {loading ? "..." : stats.totalSales}
                 </p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -122,7 +185,7 @@ export default function AdminDashboard() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Total Revenue</p>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  ₹{stats.totalRevenue.toLocaleString()}
+                  {loading ? "..." : `₹${stats.totalRevenue.toLocaleString()}`}
                 </p>
               </div>
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -136,7 +199,7 @@ export default function AdminDashboard() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Pending Amount</p>
                 <p className="text-2xl sm:text-3xl font-bold text-red-600">
-                  ₹{stats.pendingAmount.toLocaleString()}
+                  {loading ? "..." : `₹${stats.pendingAmount.toLocaleString()}`}
                 </p>
               </div>
               <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -150,7 +213,7 @@ export default function AdminDashboard() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm text-gray-600 mb-1">Total Customers</p>
                 <p className="text-2xl sm:text-3xl font-bold text-gray-900">
-                  {stats.totalCustomers}
+                  {loading ? "..." : stats.totalCustomers}
                 </p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -191,23 +254,33 @@ export default function AdminDashboard() {
           </div>
           <div className="w-full overflow-x-auto">
             <div className="min-w-[500px]">
-              <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={filteredData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip
-                    formatter={value => `₹${Number(value).toLocaleString()}`}
-                    contentStyle={{
-                      backgroundColor: "#fff",
-                      border: "1px solid #e5e7eb",
-                      borderRadius: "8px",
-                    }}
-                  />
-                  <Legend />
-                  <Bar dataKey="sales" fill="#0284c7" name="Total Sales (₹)" />
-                </BarChart>
-              </ResponsiveContainer>
+              {loading ? (
+                <div className="h-[400px] flex items-center justify-center">
+                  <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={filteredData}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={value => `₹${Number(value).toLocaleString()}`}
+                      contentStyle={{
+                        backgroundColor: "#fff",
+                        border: "1px solid #e5e7eb",
+                        borderRadius: "8px",
+                      }}
+                    />
+                    <Legend />
+                    <Bar
+                      dataKey="sales"
+                      fill="#0284c7"
+                      name="Total Sales (₹)"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              )}
             </div>
           </div>
         </div>

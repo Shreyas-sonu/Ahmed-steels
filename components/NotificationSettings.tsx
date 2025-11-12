@@ -85,8 +85,8 @@ export default function NotificationSettings() {
       if (Notification.permission === "granted") {
         new Notification("Test Notification", {
           body: "This is a test notification from Ahmed Steels",
-          icon: "/android/android-launchericon-192-192.png",
-          badge: "/badge-72x72.png",
+          icon: `${window.location.origin}/logo.png`,
+          badge: `${window.location.origin}/badge-72x72.png`,
         });
         toast.success("Test notification sent!");
       }

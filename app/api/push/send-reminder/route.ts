@@ -56,12 +56,18 @@ export async function POST(request: NextRequest) {
         "Good evening! Take a moment to review and add your sales details.";
     }
 
+    // Get the base URL for absolute icon paths
+    const baseUrl =
+      process.env.NEXT_PUBLIC_BASE_URL || process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "https://ahmed-steels.vercel.app";
+
     // Prepare notification payload
     const notificationPayload = JSON.stringify({
       title: notificationTitle,
       body: notificationBody,
-      icon: "/android/android-launchericon-192-192.png",
-      badge: "/badge-72x72.png",
+      icon: `${baseUrl}/logo.png`,
+      badge: `${baseUrl}/badge-72x72.png`,
       tag: "sales-reminder",
       data: {
         url: "/admin/sales",
