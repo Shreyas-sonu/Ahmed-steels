@@ -35,9 +35,15 @@ interface Sale {
 export default function AdminDashboard() {
   const { isAuthenticated, username } = useAuth();
   const router = useRouter();
-  const [salesData, setSalesData] = useState<any[]>([]);
-  const [filteredData, setFilteredData] = useState<any[]>([]);
-  const [selectedMonth, setSelectedMonth] = useState<string>("all");
+  const [allSales, setAllSales] = useState<Sale[]>([]);
+  const [chartData, setChartData] = useState<any[]>([]);
+  const [viewMode, setViewMode] = useState<"month" | "year">("month");
+  const [selectedMonth, setSelectedMonth] = useState<number>(
+    new Date().getMonth()
+  );
+  const [selectedYear, setSelectedYear] = useState<number>(
+    new Date().getFullYear()
+  );
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
     totalSales: 0,
@@ -68,10 +74,7 @@ export default function AdminDashboard() {
 
       if (error) throw error;
 
-      // Process data for monthly chart
-      const monthlyData = processMonthlyData(sales || []);
-      setSalesData(monthlyData);
-      setFilteredData(monthlyData);
+      setAllSales(sales || []);
 
       // Calculate stats
       const totalSales = sales?.length || 0;
@@ -99,7 +102,33 @@ export default function AdminDashboard() {
     }
   };
 
-  const processMonthlyData = (sales: Sale[]) => {
+  const processDailyData = (sales: Sale[], month: number, year: number) => {
+    // Get number of days in the selected month
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+    // Initialize all days with 0
+    const dailyTotals = Array.from({ length: daysInMonth }, (_, i) => ({
+      day: i + 1,
+      sales: 0,
+      count: 0,
+    }));
+
+    // Aggregate sales by day
+    sales.forEach((sale: Sale) => {
+      const saleDate = new Date(sale.date);
+      if (saleDate.getMonth() === month && saleDate.getFullYear() === year) {
+        const dayIndex = saleDate.getDate() - 1;
+        if (dayIndex >= 0 && dayIndex < daysInMonth) {
+          dailyTotals[dayIndex].sales += sale.total_amount;
+          dailyTotals[dayIndex].count += 1;
+        }
+      }
+    });
+
+    return dailyTotals;
+  };
+
+  const processMonthlyData = (sales: Sale[], year: number) => {
     const monthNames = [
       "Jan",
       "Feb",
@@ -114,11 +143,11 @@ export default function AdminDashboard() {
       "Nov",
       "Dec",
     ];
-    const currentYear = new Date().getFullYear();
 
     // Initialize all months with 0
-    const monthlyTotals = monthNames.map(month => ({
-      month,
+    const monthlyTotals = monthNames.map((name, index) => ({
+      month: name,
+      monthIndex: index,
       sales: 0,
       count: 0,
     }));
@@ -126,7 +155,7 @@ export default function AdminDashboard() {
     // Aggregate sales by month
     sales.forEach((sale: Sale) => {
       const saleDate = new Date(sale.date);
-      if (saleDate.getFullYear() === currentYear) {
+      if (saleDate.getFullYear() === year) {
         const monthIndex = saleDate.getMonth();
         monthlyTotals[monthIndex].sales += sale.total_amount;
         monthlyTotals[monthIndex].count += 1;
@@ -137,14 +166,18 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    // Filter data based on selected month or date range
-    if (selectedMonth === "all") {
-      setFilteredData(salesData);
-    } else {
-      const filtered = salesData.filter(item => item.month === selectedMonth);
-      setFilteredData(filtered);
+    if (allSales.length > 0) {
+      if (viewMode === "month") {
+        // Show day-wise data for selected month
+        const data = processDailyData(allSales, selectedMonth, selectedYear);
+        setChartData(data);
+      } else {
+        // Show month-wise data for selected year
+        const data = processMonthlyData(allSales, selectedYear);
+        setChartData(data);
+      }
     }
-  }, [selectedMonth, salesData]);
+  }, [allSales, viewMode, selectedMonth, selectedYear]);
 
   if (!isAuthenticated) {
     return null;
@@ -225,33 +258,110 @@ export default function AdminDashboard() {
 
         {/* Sales Chart */}
         <div className="bg-white rounded-xl shadow-md p-4 sm:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900">
-              Monthly Sales Overview
-            </h2>
-            <div className="flex items-center space-x-2">
+          <div className="flex flex-col gap-4 mb-6">
+            {/* Header and View Toggle */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                Sales Overview
+              </h2>
+
+              {/* View Mode Toggle */}
+              <div className="flex items-center gap-2 bg-gray-100 p-1 rounded-lg w-fit">
+                <button
+                  onClick={() => setViewMode("month")}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    viewMode === "month"
+                      ? "bg-white text-primary-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Month (Days)
+                </button>
+                <button
+                  onClick={() => setViewMode("year")}
+                  className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+                    viewMode === "year"
+                      ? "bg-white text-primary-600 shadow-sm"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Year (Months)
+                </button>
+              </div>
+            </div>
+
+            {/* Date Selector */}
+            <div className="flex flex-wrap items-center gap-3">
               <Calendar className="w-5 h-5 text-gray-500 flex-shrink-0" />
-              <select
-                value={selectedMonth}
-                onChange={e => setSelectedMonth(e.target.value)}
-                className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-              >
-                <option value="all">All Months</option>
-                <option value="Jan">January</option>
-                <option value="Feb">February</option>
-                <option value="Mar">March</option>
-                <option value="Apr">April</option>
-                <option value="May">May</option>
-                <option value="Jun">June</option>
-                <option value="Jul">July</option>
-                <option value="Aug">August</option>
-                <option value="Sep">September</option>
-                <option value="Oct">October</option>
-                <option value="Nov">November</option>
-                <option value="Dec">December</option>
-              </select>
+
+              {viewMode === "month" ? (
+                <>
+                  {/* Month Selector */}
+                  <select
+                    value={selectedMonth}
+                    onChange={e => setSelectedMonth(Number(e.target.value))}
+                    className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    <option value={0}>January</option>
+                    <option value={1}>February</option>
+                    <option value={2}>March</option>
+                    <option value={3}>April</option>
+                    <option value={4}>May</option>
+                    <option value={5}>June</option>
+                    <option value={6}>July</option>
+                    <option value={7}>August</option>
+                    <option value={8}>September</option>
+                    <option value={9}>October</option>
+                    <option value={10}>November</option>
+                    <option value={11}>December</option>
+                  </select>
+
+                  {/* Year Selector for Month View */}
+                  <select
+                    value={selectedYear}
+                    onChange={e => setSelectedYear(Number(e.target.value))}
+                    className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    {Array.from({ length: 5 }, (_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      );
+                    })}
+                  </select>
+
+                  <span className="text-sm text-gray-600">
+                    (Day-wise sales)
+                  </span>
+                </>
+              ) : (
+                <>
+                  {/* Year Selector */}
+                  <select
+                    value={selectedYear}
+                    onChange={e => setSelectedYear(Number(e.target.value))}
+                    className="px-3 sm:px-4 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  >
+                    {Array.from({ length: 5 }, (_, i) => {
+                      const year = new Date().getFullYear() - i;
+                      return (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      );
+                    })}
+                  </select>
+
+                  <span className="text-sm text-gray-600">
+                    (Month-wise sales)
+                  </span>
+                </>
+              )}
             </div>
           </div>
+
           <div className="w-full overflow-x-auto">
             <div className="min-w-[500px]">
               {loading ? (
@@ -260,12 +370,26 @@ export default function AdminDashboard() {
                 </div>
               ) : (
                 <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={filteredData}>
+                  <BarChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="month" />
+                    <XAxis
+                      dataKey={viewMode === "month" ? "day" : "month"}
+                      label={
+                        viewMode === "month"
+                          ? {
+                              value: "Day",
+                              position: "insideBottom",
+                              offset: -5,
+                            }
+                          : undefined
+                      }
+                    />
                     <YAxis />
                     <Tooltip
                       formatter={value => `₹${Number(value).toLocaleString()}`}
+                      labelFormatter={label =>
+                        viewMode === "month" ? `Day ${label}` : label
+                      }
                       contentStyle={{
                         backgroundColor: "#fff",
                         border: "1px solid #e5e7eb",
